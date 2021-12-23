@@ -562,6 +562,137 @@ ___TEMPLATE_PARAMETERS___
     ]
   },
   {
+    "type": "GROUP",
+    "name": "trackOptions",
+    "displayName": "Track Options",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "TEXT",
+        "name": "trackEventName",
+        "displayName": "Event Name",
+        "simpleValueType": true,
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ]
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "trackParameters",
+        "displayName": "Parameters (Optional)",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Parameter Name",
+            "name": "name",
+            "type": "TEXT",
+            "isUnique": true
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ]
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "trackWithGroups",
+        "checkboxText": "Track With Groups",
+        "simpleValueType": true,
+        "defaultValue": false
+      },
+      {
+        "type": "SELECT",
+        "name": "trackMethod",
+        "displayName": "Transport Method",
+        "selectItems": [
+          {
+            "value": "xhr",
+            "displayValue": "xhr"
+          },
+          {
+            "value": "sendBeacon",
+            "displayValue": "sendBeacon"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "trackWithGroups",
+            "paramValue": false,
+            "type": "EQUALS"
+          }
+        ],
+        "defaultValue": "xhr"
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "trackImmediately",
+        "checkboxText": "Send Immediately",
+        "simpleValueType": true,
+        "help": "Check to ignore the batching logic and send the hit immediately.",
+        "enablingConditions": [
+          {
+            "paramName": "trackWithGroups",
+            "paramValue": false,
+            "type": "EQUALS"
+          }
+        ],
+        "defaultValue": false
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "trackGroups",
+        "displayName": "Groups",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Group Name",
+            "name": "name",
+            "type": "TEXT",
+            "isUnique": true
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value(s)",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "trackWithGroups",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ],
+        "help": "Add group names and the values you want to track to. You can add multiple values for any group by passing the values in a comma-separated string, e.g. \u003cstrong\u003e1,2,5,7,8\u003c/strong\u003e.",
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ],
+        "newRowButtonText": "Add Group"
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "track",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "type",
+        "paramValue": "track_with_groups",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
     "type": "TEXT",
     "name": "aliasAlias",
     "displayName": "Alias",
@@ -1398,7 +1529,31 @@ const onsuccess = () => {
       }
       break;
     case 'track':
-    case 'track_with_groups':
+      const trackProperties = normalizeTable(data.trackParameters, 'name', 'value') || {};
+      if (!data.trackWithGroups) {
+        callMixpanel(
+          libraryName + 'track',
+          data.trackEventName,
+          trackProperties,
+          {
+            transport: data.trackMethod,
+            send_immediately: data.trackImmediately
+          }
+        );
+      } else {
+        const groups = data.trackGroups.map(group => {
+          return {
+            name: group.name,
+            value: stringToArrayAndTrim(group.value)
+          };
+        });
+        callMixpanel(
+          libraryName + 'track_with_groups',
+          data.trackEventName,
+          trackProperties,
+          normalizeTable(groups)
+        );
+      }
       break;
     case 'alias':
       callMixpanel(
