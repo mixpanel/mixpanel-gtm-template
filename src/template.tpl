@@ -1420,7 +1420,6 @@ const stringToArrayAndTrim = str => str.split(',').map(n => makeString(n.trim())
 
 // Convenience method for logging calls to the wrapper
 const callMixpanel = function() {
-  log(arguments);
   callInWindow('_mixpanel.apply', null, arguments);
 };
 
@@ -1553,10 +1552,11 @@ const onsuccess = () => {
           libraryName + 'track_with_groups',
           data.trackEventName,
           trackProperties,
-          normalizeTable(groups)
+          normalizeTable(groups, 'name', 'value')
         );
       }
       break;
+      
     case 'alias':
       callMixpanel(
         libraryName + data.type,
@@ -1564,14 +1564,17 @@ const onsuccess = () => {
         data.aliasOriginal
       );
       break;
+      
+    // Process all three opt_* commands
     case 'clear_opt_in_out_tracking':
     case 'opt_in_tracking':
     case 'opt_out_tracking':
       callMixpanel(
         libraryName + data.type,
-        getType(data.optOptions) === 'object' ? data.optOptions: null
+        getType(data.optOptions) === 'object' ? data.optOptions : null
       );
       break;
+      
     case 'disable':
       if (data.disableEvents) {
         callMixpanel(
@@ -1582,6 +1585,7 @@ const onsuccess = () => {
         callMixpanel(libraryName + data.type);
       }
       break;
+      
     case 'identify':
       if (data.identifyId) {
         callMixpanel(
@@ -1592,6 +1596,7 @@ const onsuccess = () => {
         callMixpanel(libraryName + data.type);
       }
       break;
+      
     case 'register':
       callMixpanel(
         libraryName + data.type,
@@ -1599,6 +1604,7 @@ const onsuccess = () => {
         data.registerDays
       );
       break;
+      
     case 'register_once':
       callMixpanel(
         libraryName + data.type,
@@ -1607,30 +1613,35 @@ const onsuccess = () => {
         data.registerDays
       );
       break;
+      
     case 'reset':
       callMixpanel(libraryName + data.type);
       break;
+      
     case 'set_config':
       callMixpanel(
         libraryName + data.type,
         normalizeTable(data.setConfigOptions, 'key', 'value')
       );
       break;
+      
     case 'time_event':
       callMixpanel(
         libraryName + data.type,
         data.timeEventName
       );
       break;
+      
     case 'track_forms':
     case 'track_links':
       callMixpanel(
         libraryName + data.type,
         data.trackFormsLinksQuery,
         data.trackFormsLinksEventName,
-        normalizeTable(data.trackFormsLinksProperties) || null
+        normalizeTable(data.trackFormsLinksProperties, 'name', 'value') || null
       );
       break;
+      
     case 'unregister':
       callMixpanel(
         libraryName + data.type,
