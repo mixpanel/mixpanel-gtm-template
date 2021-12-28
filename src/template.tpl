@@ -167,7 +167,8 @@ ___TEMPLATE_PARAMETERS___
             "displayValue": "group.unset"
           }
         ],
-        "simpleValueType": true
+        "simpleValueType": true,
+        "help": "Choose the type of \u003cstrong\u003egroup\u003c/strong\u003e command you wish to use. For more details, consult \u003ca href\u003d\"https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanelgroup\"\u003ethis reference\u003c/a\u003e."
       },
       {
         "type": "TEXT",
@@ -380,7 +381,8 @@ ___TEMPLATE_PARAMETERS___
             "displayValue": "people.unset"
           }
         ],
-        "simpleValueType": true
+        "simpleValueType": true,
+        "help": "Choose the \u003cstrong\u003epeople\u003c/strong\u003e command you wish to use. For more information, consult \u003ca href\u003d\"https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanelpeople\"\u003ethis reference\u003c/a\u003e."
       },
       {
         "type": "SIMPLE_TABLE",
@@ -770,7 +772,7 @@ ___TEMPLATE_PARAMETERS___
     "name": "identifyId",
     "displayName": "Unique ID (Optional)",
     "simpleValueType": true,
-    "help": "Enter unique ID to identify the current user with. \u003ca href\u003d\"https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanelidentify\"\u003eClick here for more information\u003c/a\u003e.",
+    "help": "Enter a unique ID with which to identify the current user. \u003ca href\u003d\"https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanelidentify\"\u003eClick here for more information\u003c/a\u003e.",
     "enablingConditions": [
       {
         "paramName": "type",
@@ -816,7 +818,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "NON_EMPTY"
       }
     ],
-    "help": "Add the properties you want to register, as well as the days since the last visit to store the user\u0027s super properties. \u003ca href\u003d\"https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanelregister_once\"\u003eClick here for more information\u003c/a\u003e."
+    "help": "Add the properties you want to register as well as the days since the last visit to store the user\u0027s super properties. \u003ca href\u003d\"https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanelregister_once\"\u003eClick here for more information\u003c/a\u003e."
   },
   {
     "type": "TEXT",
