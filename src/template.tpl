@@ -1454,7 +1454,8 @@ const onsuccess = () => {
   initializeInstance();
 
   switch (data.type) {
-
+    
+    // Process add_group, remove_group, set_group, and group.* commands
     case 'group':
       const groupCommand = libraryName + data.groupCommand;
       if (['add_group', 'remove_group', 'set_group'].indexOf(data.groupCommand) > -1) {
@@ -1488,6 +1489,7 @@ const onsuccess = () => {
       } 
       break;
       
+    // Process people.* commands  
     case 'people':
       const peopleCommand = libraryName + data.peopleCommand;
       if (['people.append', 'people.union'].indexOf(data.peopleCommand) > -1) {
@@ -1529,6 +1531,8 @@ const onsuccess = () => {
         );
       }
       break;
+      
+    // Process track and track_with_groups commands  
     case 'track':
       const trackProperties = normalizeTable(data.trackParameters, 'name', 'value') || {};
       if (!data.trackWithGroups) {
