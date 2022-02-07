@@ -42,7 +42,7 @@ Once you select a tag type, additional options may appear. Consult the SDK refer
 
 ### Firing the tag
 
-Once you're happy with your tag, you need to add a **Trigger** to it. For example, to trigger it with every page load, add the **Add Pages** trigger to it.
+Once you're happy with your tag, you need to add a **Trigger** to it. For example, to trigger it with every page load, add the **All Pages** trigger to it.
 
 Save the tag when done.
 
