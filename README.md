@@ -2,9 +2,10 @@
 
 These are the source files for the Google Tag Manager custom template designed for deploying and implementing the Mixpanel JavaScript SDK.
 
-## Manual installation
+https://user-images.githubusercontent.com/556882/154125933-b584de10-b7fa-4668-b815-7429192d867a.mp4
 
-Once the template has been published, you can locate it in the [Google Tag Manager community template gallery](https://tagmanager.google.com/gallery/#/), and you can install it via the Google Tag Manager user interface.
+## Manual installation
+The easiest way to install the custom template is to locate it in the [Google Tag Manager community template gallery](https://tagmanager.google.com/gallery/#/), and you can install it via the Google Tag Manager user interface.
 
 To **manually install** the template, e.g. for debugging prior to the changes being published in the community template gallery, follow these steps.
 
