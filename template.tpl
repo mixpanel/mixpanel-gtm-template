@@ -1405,6 +1405,18 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "hooks",
                 "displayValue": "hooks"
+              },
+              {
+                "value": "skip_first_touch_marketing",
+                "displayValue": "skip_first_touch_marketing"
+              },
+              {
+                "value": "track_marketing",
+                "displayValue": "track_marketing"
+              },
+              {
+                "value": "track_pageview",
+                "displayValue": "track_pageview"
               }
             ],
             "isUnique": true,
