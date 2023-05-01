@@ -1,9 +1,9 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
-  # Latest version
+  - sha: 0ba1f3498e270afb9d70089e15688cb2569bbe11
+    changeNotes: Add new Track Pageview type and new marketing-related config options.
   - sha: ac9c338a8c7163e80708b7761821036293c4d234
     changeNotes: Prevent unnecessary loading of SDK if wrapper has already been initialized.
-  # Older versions
   - sha: 86227dff1b65cf1f4f062ee4edaad57105101376
     changeNotes: Initial release

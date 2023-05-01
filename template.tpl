@@ -63,6 +63,10 @@ ___TEMPLATE_PARAMETERS___
         "displayValue": "– Track"
       },
       {
+        "value": "pageview",
+        "displayValue": "– Track Pageview"
+      },
+      {
         "value": "alias",
         "displayValue": "alias"
       },
@@ -690,6 +694,73 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "type",
         "paramValue": "track_with_groups",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "trackPageviewOptions",
+    "displayName": "Optional Parameters",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "trackPageviewParameters",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Parameter Name",
+            "name": "name",
+            "type": "TEXT",
+            "isUnique": true
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ]
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "trackPageviewAdditionalEventOptions",
+        "checkboxText": "Add additional event options",
+        "simpleValueType": true,
+        "help": "Check this box to add additional event options to the \u003cstrong\u003etrack_pageview\u003c/strong\u003e call. For example, the event option \u003cstrong\u003eevent_name\u003c/strong\u003e lets you use a custom event name for the pageview ping."
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "trackPageviewEventOptions",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Option name",
+            "name": "name",
+            "type": "TEXT",
+            "isUnique": true
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Option value",
+            "name": "value",
+            "type": "TEXT"
+          }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "trackPageviewAdditionalEventOptions",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ]
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "type",
+        "paramValue": "pageview",
         "type": "EQUALS"
       }
     ]
@@ -1334,6 +1405,18 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "hooks",
                 "displayValue": "hooks"
+              },
+              {
+                "value": "skip_first_touch_marketing",
+                "displayValue": "skip_first_touch_marketing"
+              },
+              {
+                "value": "track_marketing",
+                "displayValue": "track_marketing"
+              },
+              {
+                "value": "track_pageview",
+                "displayValue": "track_pageview"
               }
             ],
             "isUnique": true,
@@ -1559,6 +1642,17 @@ const onsuccess = () => {
           normalizeTable(groups, 'name', 'value')
         );
       }
+      break;
+    
+    // Process the track_pageview command  
+    case 'pageview':
+      const trackPageviewProperties = normalizeTable(data.trackPageviewParameters, 'name', 'value') || {};
+      const trackPageviewEventOptions = normalizeTable(data.trackPageviewEventOptions, 'name', 'value') || {};
+      callMixpanel(
+        libraryName + 'track_pageview',
+        trackPageviewProperties,
+        trackPageviewEventOptions
+      );
       break;
       
     case 'alias':
