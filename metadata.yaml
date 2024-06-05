@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: a573f4b1a49ad995d86bd6f492953bd5bd047b58
+    changeNotes: Add new session recording types and more config options.
   - sha: 0ba1f3498e270afb9d70089e15688cb2569bbe11
     changeNotes: Add new Track Pageview type and new marketing-related config options.
   - sha: ac9c338a8c7163e80708b7761821036293c4d234
