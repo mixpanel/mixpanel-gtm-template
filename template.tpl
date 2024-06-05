@@ -119,6 +119,14 @@ ___TEMPLATE_PARAMETERS___
         "displayValue": "track_links"
       },
       {
+        "value": "start_session_recording",
+        "displayValue": "start_session_recording"
+      },
+      {
+        "value": "stop_session_recording",
+        "displayValue": "stop_session_recording"
+      },
+      {
         "value": "unregister",
         "displayValue": "unregister"
       }
@@ -1774,6 +1782,11 @@ const onsuccess = () => {
         data.trackFormsLinksEventName,
         normalizeTable(data.trackFormsLinksProperties, 'name', 'value') || null
       );
+      break;
+
+    case 'start_session_recording':
+    case 'stop_session_recording':
+      callMixpanel(libraryName + data.type);
       break;
 
     case 'unregister':
