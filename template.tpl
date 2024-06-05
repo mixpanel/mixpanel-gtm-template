@@ -1299,6 +1299,10 @@ ___TEMPLATE_PARAMETERS___
                 "displayValue": "store_google"
               },
               {
+                "value": "stop_utm_persistence",
+                "displayValue": "stop_utm_persistence"
+              },
+              {
                 "value": "save_referrer",
                 "displayValue": "save_referrer"
               },
@@ -1417,6 +1421,38 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "track_pageview",
                 "displayValue": "track_pageview"
+              },
+              {
+                "value": "record_block_class",
+                "displayValue": "record_block_class"
+              },
+              {
+                "value": "record_block_selector",
+                "displayValue": "record_block_selector"
+              },
+              {
+                "value": "record_idle_timeout_ms",
+                "displayValue": "record_idle_timeout_ms"
+              },
+              {
+                "value": "record_mask_text_class",
+                "displayValue": "record_mask_text_class"
+              },
+              {
+                "value": "record_mask_text_selector",
+                "displayValue": "record_mask_text_selector"
+              },
+              {
+                "value": "record_max_ms",
+                "displayValue": "record_max_ms"
+              },
+              {
+                "value": "record_sessions_percent",
+                "displayValue": "record_sessions_percent"
+              },
+              {
+                "value": "recorder_src",
+                "displayValue": "recorder_src"
               }
             ],
             "isUnique": true,
@@ -1496,7 +1532,7 @@ const normalizeTable = (table, prop, val) => {
   }
   return false;
 };
-        
+
 
 // Split a string into an array and trim the constituents of leading and trailing whitespace
 const stringToArrayAndTrim = str => str.split(',').map(n => makeString(n.trim()));
@@ -1537,7 +1573,7 @@ const onsuccess = () => {
   initializeInstance();
 
   switch (data.type) {
-    
+
     // Process add_group, remove_group, set_group, and group.* commands
     case 'group':
       const groupCommand = libraryName + data.groupCommand;
@@ -1569,10 +1605,10 @@ const onsuccess = () => {
             groupProperties
           );
         }
-      } 
+      }
       break;
-      
-    // Process people.* commands  
+
+    // Process people.* commands
     case 'people':
       const peopleCommand = libraryName + data.peopleCommand;
       if (['people.append', 'people.union'].indexOf(data.peopleCommand) > -1) {
@@ -1614,8 +1650,8 @@ const onsuccess = () => {
         );
       }
       break;
-      
-    // Process track and track_with_groups commands  
+
+    // Process track and track_with_groups commands
     case 'track':
       const trackProperties = normalizeTable(data.trackParameters, 'name', 'value') || {};
       if (!data.trackWithGroups) {
@@ -1643,8 +1679,8 @@ const onsuccess = () => {
         );
       }
       break;
-    
-    // Process the track_pageview command  
+
+    // Process the track_pageview command
     case 'pageview':
       const trackPageviewProperties = normalizeTable(data.trackPageviewParameters, 'name', 'value') || {};
       const trackPageviewEventOptions = normalizeTable(data.trackPageviewEventOptions, 'name', 'value') || {};
@@ -1654,7 +1690,7 @@ const onsuccess = () => {
         trackPageviewEventOptions
       );
       break;
-      
+
     case 'alias':
       callMixpanel(
         libraryName + data.type,
@@ -1662,7 +1698,7 @@ const onsuccess = () => {
         data.aliasOriginal
       );
       break;
-      
+
     // Process all three opt_* commands
     case 'clear_opt_in_out_tracking':
     case 'opt_in_tracking':
@@ -1672,7 +1708,7 @@ const onsuccess = () => {
         getType(data.optOptions) === 'object' ? data.optOptions : null
       );
       break;
-      
+
     case 'disable':
       if (data.disableEvents) {
         callMixpanel(
@@ -1683,7 +1719,7 @@ const onsuccess = () => {
         callMixpanel(libraryName + data.type);
       }
       break;
-      
+
     case 'identify':
       if (data.identifyId) {
         callMixpanel(
@@ -1694,7 +1730,7 @@ const onsuccess = () => {
         callMixpanel(libraryName + data.type);
       }
       break;
-      
+
     case 'register':
       callMixpanel(
         libraryName + data.type,
@@ -1702,7 +1738,7 @@ const onsuccess = () => {
         data.registerDays
       );
       break;
-      
+
     case 'register_once':
       callMixpanel(
         libraryName + data.type,
@@ -1711,25 +1747,25 @@ const onsuccess = () => {
         data.registerDays
       );
       break;
-      
+
     case 'reset':
       callMixpanel(libraryName + data.type);
       break;
-      
+
     case 'set_config':
       callMixpanel(
         libraryName + data.type,
         normalizeTable(data.setConfigOptions, 'key', 'value')
       );
       break;
-      
+
     case 'time_event':
       callMixpanel(
         libraryName + data.type,
         data.timeEventName
       );
       break;
-      
+
     case 'track_forms':
     case 'track_links':
       callMixpanel(
@@ -1739,7 +1775,7 @@ const onsuccess = () => {
         normalizeTable(data.trackFormsLinksProperties, 'name', 'value') || null
       );
       break;
-      
+
     case 'unregister':
       callMixpanel(
         libraryName + data.type,
@@ -1747,7 +1783,7 @@ const onsuccess = () => {
       );
       break;
   }
-  
+
   data.gtmOnSuccess();
 };
 
@@ -1971,5 +2007,3 @@ setup: ''
 ___NOTES___
 
 Created on 27/10/2021, 18:34:01
-
-
