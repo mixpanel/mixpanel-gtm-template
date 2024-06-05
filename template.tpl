@@ -1507,7 +1507,7 @@ const templateStorage = require('templateStorage');
 
 // Constants
 const INSTANCES_STORAGE_KEY = 'mixpanel_instances';
-const JS_URL = 'https://cdn.mxpnl.com/libs/mixpanel-js-wrapper.js';
+const JS_URL = 'https://cdn.mxpnl.com/libs/mixpanel-js-wrapper.min.js';
 const LOG_PREFIX = '[Mixpanel / GTM] ';
 const WRAPPER_NAMESPACE = '_mixpanel';
 
@@ -1986,7 +1986,7 @@ ___WEB_PERMISSIONS___
             "listItem": [
               {
                 "type": 1,
-                "string": "https://cdn.mxpnl.com/libs/mixpanel-js-wrapper.js"
+                "string": "https://cdn.mxpnl.com/libs/mixpanel-js-wrapper.min.js"
               }
             ]
           }
