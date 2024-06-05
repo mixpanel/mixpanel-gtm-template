@@ -1560,7 +1560,7 @@ const libraryName = data.instanceName ? data.instanceName + '.' : '';
 // Build and normalize initialization options map
 const manualOptions = normalizeTable(data.initManualOptions, 'key', 'value') || {};
 
-const initOptions = Object.assign({'mp_loader': 'gtm'}, (data.initOptions === 'manual' ? manualOptions : data.initOptions) || {});
+const initOptions = Object.assign({'mp_loader': 'gtm'}, data.initOptions === 'manual' ? manualOptions : data.initOptions);
 
 // Initialize the instance if necessary
 const initializeInstance = () => {
@@ -1761,6 +1761,8 @@ const onsuccess = () => {
       break;
 
     case 'reset':
+    case 'start_session_recording':
+    case 'stop_session_recording':
       callMixpanel(libraryName + data.type);
       break;
 
@@ -1786,11 +1788,6 @@ const onsuccess = () => {
         data.trackFormsLinksEventName,
         normalizeTable(data.trackFormsLinksProperties, 'name', 'value') || null
       );
-      break;
-
-    case 'start_session_recording':
-    case 'stop_session_recording':
-      callMixpanel(libraryName + data.type);
       break;
 
     case 'unregister':
