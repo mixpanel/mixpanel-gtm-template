@@ -1548,7 +1548,7 @@ const libraryName = data.instanceName ? data.instanceName + '.' : '';
 // Build and normalize initialization options map
 const manualOptions = normalizeTable(data.initManualOptions, 'key', 'value') || {};
 
-const initOptions = (data.initOptions === 'manual' ? manualOptions : data.initOptions) || {};
+const initOptions = Object.assign({'mp_loader': 'gtm'}, (data.initOptions === 'manual' ? manualOptions : data.initOptions) || {});
 
 // Initialize the instance if necessary
 const initializeInstance = () => {
