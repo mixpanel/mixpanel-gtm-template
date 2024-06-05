@@ -67,6 +67,10 @@ ___TEMPLATE_PARAMETERS___
         "displayValue": "– Track Pageview"
       },
       {
+        "value": "init",
+        "displayValue": "init"
+      },
+      {
         "value": "alias",
         "displayValue": "alias"
       },
