@@ -1459,6 +1459,10 @@ ___TEMPLATE_PARAMETERS___
                 "displayValue": "record_max_ms"
               },
               {
+                "value": "record_min_ms",
+                "displayValue": "record_min_ms"
+              },
+              {
                 "value": "record_sessions_percent",
                 "displayValue": "record_sessions_percent"
               },
