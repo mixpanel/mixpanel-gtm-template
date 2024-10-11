@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: 1feb80cd2a71f6a12041aacb2785e81c03840fbe
+    changeNotes: Add record_min_ms config option for session recording.
   - sha: 5ae3c7cc756a78ef1dc1d04ed31c18a274399214
     changeNotes: Add new session recording types and more config options.
   - sha: 0ba1f3498e270afb9d70089e15688cb2569bbe11
