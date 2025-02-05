@@ -1496,6 +1496,31 @@ ___TEMPLATE_PARAMETERS___
         "help": "For each option, click the \u003cstrong\u003eAdd option\u003c/strong\u003e button. Select the option name from the drop-down list, and set the value to whatever you want the option to be. Boolean values (e.g. \u003cstrong\u003etrue\u003c/strong\u003e and \u003cstrong\u003efalse\u003c/strong\u003e) are automatically converted from strings to Booleans by the template code. Similarly, number values (e.g. \u003cstrong\u003e365\u003c/strong\u003e) are automatically converted to numbers by the template code. Functions, objects, and other non-string types need to be passed using a GTM variable, selected from the list."
       }
     ]
+  },
+  {
+    "type": "GROUP",
+    "name": "autocaptureGroup",
+    "displayName": "Autocapture",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "autocaptureMode",
+        "displayName": "Autocapture Mode",
+        "macrosInSelect": true,
+        "selectItems": [
+          {
+            "value": false,
+            "displayValue": "Disabled"
+          },
+          {
+            "value": true,
+            "displayValue": "Enabled"
+          }
+        ],
+        "simpleValueType": true
+      }
+    ]
   }
 ]
 
@@ -1565,6 +1590,7 @@ const libraryName = data.instanceName ? data.instanceName + '.' : '';
 const manualOptions = normalizeTable(data.initManualOptions, 'key', 'value') || {};
 
 const initOptions = (data.initOptions === 'manual' ? manualOptions : data.initOptions) || {};
+initOptions.autocapture = data.autocaptureMode;
 if (!initOptions.mp_loader) {
   initOptions.mp_loader = 'gtm';
 }
