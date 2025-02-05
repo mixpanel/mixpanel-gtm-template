@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: 9c34946764017e0618d178a60ddc9f9122a9fe54
+    changeNotes: Add autocapture config option
   - sha: 1feb80cd2a71f6a12041aacb2785e81c03840fbe
     changeNotes: Add record_min_ms config option for session recording.
   - sha: 5ae3c7cc756a78ef1dc1d04ed31c18a274399214
