@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: 6d92bc40041aaaed305ba4de765ce11980be171d
+    changeNotes: Remove automatic conversion of tracking properties into numbers, booleans, and null. This is a breaking change for any tags relying on these conversions from strings.
   - sha: 9c34946764017e0618d178a60ddc9f9122a9fe54
     changeNotes: Add autocapture config option
   - sha: 1feb80cd2a71f6a12041aacb2785e81c03840fbe

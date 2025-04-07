@@ -10,9 +10,8 @@ ___INFO___
 
 {
   "type": "TAG",
-  "id": "cvt_temp_public_id",
+  "id": "cvt_TNPH4",
   "version": 1,
-  "securityGroups": [],
   "categories": [
     "ANALYTICS"
   ],
@@ -25,7 +24,8 @@ ___INFO___
   "description": "Template for deploying the Mixpanel JavaScript SDK and utilizing the JavaScript API on the web page.",
   "containerContexts": [
     "WEB"
-  ]
+  ],
+  "securityGroups": []
 }
 
 
@@ -1642,7 +1642,7 @@ const onsuccess = () => {
           data.groupProperty
         );
       } else {
-        const groupProperties = normalizeTable(data.groupPropertyTable, 'name', 'value');
+        const groupProperties = makeTableMap(data.groupPropertyTable, 'name', 'value');
         if (groupProperties) {
           callMixpanel(
             groupCommand,
@@ -1666,7 +1666,7 @@ const onsuccess = () => {
           }) : [];
         callMixpanel(
           peopleCommand,
-          normalizeTable(appendUnionTable, 'name', 'value')
+          makeTableMap(appendUnionTable, 'name', 'value')
         );
       } else if (['people.clear_charges', 'people.delete_user'].indexOf(data.peopleCommand) > -1) {
         callMixpanel(
@@ -1680,13 +1680,13 @@ const onsuccess = () => {
       } else if (['people.remove', 'people.set', 'people.set_once'].indexOf(data.peopleCommand) > -1) {
         callMixpanel(
           peopleCommand,
-          normalizeTable(data.peopleRemoveSetSetOnceTable, 'name', 'value')
+          makeTableMap(data.peopleRemoveSetSetOnceTable, 'name', 'value')
         );
       } else if (data.peopleCommand === 'people.track_charge') {
         callMixpanel(
           peopleCommand,
           normalize(data.peopleChargeAmount),
-          normalizeTable(data.peopleChargeOptions, 'name', 'value')
+          makeTableMap(data.peopleChargeOptions, 'name', 'value')
         );
       } else {
         callMixpanel(
@@ -1698,7 +1698,7 @@ const onsuccess = () => {
 
     // Process track and track_with_groups commands
     case 'track':
-      const trackProperties = normalizeTable(data.trackParameters, 'name', 'value') || {};
+      const trackProperties = makeTableMap(data.trackParameters, 'name', 'value') || {};
       if (!data.trackWithGroups) {
         callMixpanel(
           libraryName + 'track',
@@ -1720,15 +1720,15 @@ const onsuccess = () => {
           libraryName + 'track_with_groups',
           data.trackEventName,
           trackProperties,
-          normalizeTable(groups, 'name', 'value')
+          makeTableMap(groups, 'name', 'value')
         );
       }
       break;
 
     // Process the track_pageview command
     case 'pageview':
-      const trackPageviewProperties = normalizeTable(data.trackPageviewParameters, 'name', 'value') || {};
-      const trackPageviewEventOptions = normalizeTable(data.trackPageviewEventOptions, 'name', 'value') || {};
+      const trackPageviewProperties = makeTableMap(data.trackPageviewParameters, 'name', 'value') || {};
+      const trackPageviewEventOptions = makeTableMap(data.trackPageviewEventOptions, 'name', 'value') || {};
       callMixpanel(
         libraryName + 'track_pageview',
         trackPageviewProperties,
@@ -1779,7 +1779,7 @@ const onsuccess = () => {
     case 'register':
       callMixpanel(
         libraryName + data.type,
-        normalizeTable(data.registerProperties, 'name', 'value'),
+        makeTableMap(data.registerProperties, 'name', 'value'),
         data.registerDays
       );
       break;
@@ -1787,7 +1787,7 @@ const onsuccess = () => {
     case 'register_once':
       callMixpanel(
         libraryName + data.type,
-        normalizeTable(data.registerProperties, 'name', 'value'),
+        makeTableMap(data.registerProperties, 'name', 'value'),
         data.registerDefaultValue,
         data.registerDays
       );
@@ -1819,7 +1819,7 @@ const onsuccess = () => {
         libraryName + data.type,
         data.trackFormsLinksQuery,
         data.trackFormsLinksEventName,
-        normalizeTable(data.trackFormsLinksProperties, 'name', 'value') || null
+        makeTableMap(data.trackFormsLinksProperties, 'name', 'value') || null
       );
       break;
 
