@@ -1642,7 +1642,7 @@ const onsuccess = () => {
           data.groupProperty
         );
       } else {
-        const groupProperties = makeTableMap(data.groupPropertyTable, 'name', 'value');
+        const groupProperties = makeTableMap(data.groupPropertyTable || [], 'name', 'value');
         if (groupProperties) {
           callMixpanel(
             groupCommand,
@@ -1666,7 +1666,7 @@ const onsuccess = () => {
           }) : [];
         callMixpanel(
           peopleCommand,
-          makeTableMap(appendUnionTable, 'name', 'value')
+          makeTableMap(appendUnionTable || [], 'name', 'value')
         );
       } else if (['people.clear_charges', 'people.delete_user'].indexOf(data.peopleCommand) > -1) {
         callMixpanel(
@@ -1680,13 +1680,13 @@ const onsuccess = () => {
       } else if (['people.remove', 'people.set', 'people.set_once'].indexOf(data.peopleCommand) > -1) {
         callMixpanel(
           peopleCommand,
-          makeTableMap(data.peopleRemoveSetSetOnceTable, 'name', 'value')
+          makeTableMap(data.peopleRemoveSetSetOnceTable || [], 'name', 'value')
         );
       } else if (data.peopleCommand === 'people.track_charge') {
         callMixpanel(
           peopleCommand,
           normalize(data.peopleChargeAmount),
-          makeTableMap(data.peopleChargeOptions, 'name', 'value')
+          makeTableMap(data.peopleChargeOptions || [], 'name', 'value')
         );
       } else {
         callMixpanel(
@@ -1698,7 +1698,7 @@ const onsuccess = () => {
 
     // Process track and track_with_groups commands
     case 'track':
-      const trackProperties = makeTableMap(data.trackParameters, 'name', 'value') || {};
+      const trackProperties = makeTableMap(data.trackParameters || [], 'name', 'value') || {};
       if (!data.trackWithGroups) {
         callMixpanel(
           libraryName + 'track',
@@ -1720,15 +1720,15 @@ const onsuccess = () => {
           libraryName + 'track_with_groups',
           data.trackEventName,
           trackProperties,
-          makeTableMap(groups, 'name', 'value')
+          makeTableMap(groups || [], 'name', 'value')
         );
       }
       break;
 
     // Process the track_pageview command
     case 'pageview':
-      const trackPageviewProperties = makeTableMap(data.trackPageviewParameters, 'name', 'value') || {};
-      const trackPageviewEventOptions = makeTableMap(data.trackPageviewEventOptions, 'name', 'value') || {};
+      const trackPageviewProperties = makeTableMap(data.trackPageviewParameters || [], 'name', 'value') || {};
+      const trackPageviewEventOptions = makeTableMap(data.trackPageviewEventOptions || [], 'name', 'value') || {};
       callMixpanel(
         libraryName + 'track_pageview',
         trackPageviewProperties,
@@ -1779,7 +1779,7 @@ const onsuccess = () => {
     case 'register':
       callMixpanel(
         libraryName + data.type,
-        makeTableMap(data.registerProperties, 'name', 'value'),
+        makeTableMap(data.registerProperties || [], 'name', 'value'),
         data.registerDays
       );
       break;
@@ -1787,7 +1787,7 @@ const onsuccess = () => {
     case 'register_once':
       callMixpanel(
         libraryName + data.type,
-        makeTableMap(data.registerProperties, 'name', 'value'),
+        makeTableMap(data.registerProperties || [], 'name', 'value'),
         data.registerDefaultValue,
         data.registerDays
       );
@@ -1819,7 +1819,7 @@ const onsuccess = () => {
         libraryName + data.type,
         data.trackFormsLinksQuery,
         data.trackFormsLinksEventName,
-        makeTableMap(data.trackFormsLinksProperties, 'name', 'value') || null
+        makeTableMap(data.trackFormsLinksProperties || [], 'name', 'value') || null
       );
       break;
 
