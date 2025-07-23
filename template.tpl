@@ -1443,6 +1443,10 @@ ___TEMPLATE_PARAMETERS___
                 "displayValue": "record_block_selector"
               },
               {
+                "value": "record_heatmap_data",
+                "displayValue": "record_heatmap_data"
+              },
+              {
                 "value": "record_idle_timeout_ms",
                 "displayValue": "record_idle_timeout_ms"
               },
