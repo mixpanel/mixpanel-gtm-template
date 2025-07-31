@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: 73bf777da337e4f3d778f619ea96e2f8dbd5f3d9
+    changeNotes: Add record_heatmap_data config option for heatmaps.
   - sha: 2713b9a80902ab6bd9bd1b7bd7e93a11867ebe1f
     changeNotes: Fixes tags with empty tracking data not firing. This bug was introduced in the last change, which removed automatic conversion of tracking properties into numbers, booleans, and null.
   - sha: 6d92bc40041aaaed305ba4de765ce11980be171d
