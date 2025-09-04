@@ -1245,7 +1245,7 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true,
         "notSetText": "Use default values",
         "subParams": [],
-        "help": "If you select \u003cstrong\u003eUse default values\u003c/strong\u003e, then the initialization is done with \u003ca href\u003d\"https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js#L85\"\u003ethe default values\u003c/a\u003e.\u003cbr/\u003e\u003cbr/\u003e\nYou can also select a \u003cstrong\u003e{{GTM variable}}\u003c/strong\u003e from the list, which needs to return an object that has the key-value pairs you want to configure the instance with. You can find the key-value pairs following \u003ca https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js#L85\"\u003ethis example\u003c/a\u003e.\u003cbr/\u003e\u003cbr/\u003eFinally, you can \u003cstrong\u003eSet options manually\u003c/strong\u003e in the tag itself, by selecting the corresponding option."
+        "help": "If you select \u003cstrong\u003eUse default values\u003c/strong\u003e, then the initialization is done with default values for the Tag Manager template.\u003cbr/\u003e\u003cbr/\u003e\nYou can also select a \u003cstrong\u003e{{GTM variable}}\u003c/strong\u003e from the list, which needs to return an object that has the key-value pairs you want to configure the instance with. You can find the key-value pairs following \u003ca https://github.com/mixpanel/mixpanel-js/blob/master/src/mixpanel-core.js#L85\"\u003ethis example\u003c/a\u003e.\u003cbr/\u003e\u003cbr/\u003eFinally, you can \u003cstrong\u003eSet options manually\u003c/strong\u003e in the tag itself, by selecting the corresponding option."
       },
       {
         "type": "SIMPLE_TABLE",
@@ -1595,8 +1595,16 @@ const manualOptions = normalizeTable(data.initManualOptions, 'key', 'value') || 
 
 const initOptions = (data.initOptions === 'manual' ? manualOptions : data.initOptions) || {};
 initOptions.autocapture = data.autocaptureMode;
-if (!initOptions.mp_loader) {
-  initOptions.mp_loader = 'gtm';
+
+const GTM_DEFAULTS = {
+  mp_loader: 'gtm',
+  persistence: 'localStorage',
+  stop_utm_persistence: true,
+};
+for (const option in GTM_DEFAULTS) {
+  if (initOptions[option] === undefined) {
+    initOptions[option] = GTM_DEFAULTS[option];
+  }
 }
 
 // Initialize the instance if necessary
