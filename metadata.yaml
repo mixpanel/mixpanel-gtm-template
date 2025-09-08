@@ -1,7 +1,7 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
-  - sha: 985038c5d496c163478b1b0830b69a49d1f0158b
+  - sha: 38dc6bd0e473e95171c236f11c0fd71d1fe06888
     changeNotes: Change default init options. If not specified, 'persistence' defaults to 'localStorage' and 'stop_utm_persistence' defaults to true.
   - sha: da9b5fca97db49a0f76462d8be5db4b56d878772
     changeNotes: Add record_heatmap_data config option for heatmaps.
