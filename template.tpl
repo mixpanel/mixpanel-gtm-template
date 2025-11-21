@@ -1224,6 +1224,13 @@ ___TEMPLATE_PARAMETERS___
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
+        "type": "CHECKBOX",
+        "name": "optOutUntilCookieConsentGranted",
+        "checkboxText": "Disable Mixpanel until the user grants cookie consent",
+        "simpleValueType": true,
+        "help": "If checked, the user is opted out of Mixpanel integration until cookie consent is granted.\n\nYou must integrate Google Tag Manager with a Consent Mode Provider (CMP) in order for this to function."
+      },
+      {
         "type": "TEXT",
         "name": "instanceName",
         "displayName": "Library Name",
@@ -1532,10 +1539,12 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 // APIs
+const addConsentListener = require('addConsentListener');
 const callInWindow = require('callInWindow');
 const copyFromWindow = require('copyFromWindow');
 const getType = require('getType');
 const injectScript = require('injectScript');
+const isConsentGranted = require('isConsentGranted');
 const log = require('logToConsole');
 const makeNumber = require('makeNumber');
 const makeString = require('makeString');
@@ -1605,6 +1614,30 @@ for (const option in GTM_DEFAULTS) {
   if (initOptions[option] === undefined) {
     initOptions[option] = GTM_DEFAULTS[option];
   }
+}
+if (data.optOutUntilCookieConsentGranted) {
+  let mixcloudOptInState = true;
+  // If the user has not customized opt-out tracking, opt out by default and
+  // set up GTM cookie consent listeners.
+  log(LOG_PREFIX + 'Initializing Mixpanel opt-out...');
+  const analyticsConsentGranted = isConsentGranted('analytics_storage');
+  if (analyticsConsentGranted) {
+    log(LOG_PREFIX + 'Analytics consent granted, keeping opted-in.');
+  } else {
+    log(LOG_PREFIX + 'Analytics consent not granted, opting out until granted.');
+    initOptions.opt_out_tracking_by_default = true;
+    mixcloudOptInState = false;
+  }
+  addConsentListener('analytics_storage', (consentType, granted) => {
+    if (granted === mixcloudOptInState) {
+      // Nothing to do. Don't pollute the Mixpanel logs with unnecessary opt-in events.
+      return;
+    }
+    const operation = granted ? 'opt_in_tracking' : 'opt_out_tracking';
+    log(LOG_PREFIX + 'Consent changed, running operation: ' + operation);
+    callMixpanel(libraryName + operation, getType(data.optOptions) === 'object' ? data.optOptions : null);
+    mixcloudOptInState = granted;
+  });
 }
 
 // Initialize the instance if necessary
@@ -2053,6 +2086,59 @@ ___WEB_PERMISSIONS___
       "param": []
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_consent",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "consentTypes",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "analytics_storage"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
@@ -2066,3 +2152,5 @@ setup: ''
 ___NOTES___
 
 Created on 27/10/2021, 18:34:01
+
+
