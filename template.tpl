@@ -1616,66 +1616,62 @@ for (const option in GTM_DEFAULTS) {
   }
 }
 
-if (data.disablePersistenceUntilConsentGranted) {
-  // Integrate with a Consent Mode Provider (CMP) to apply the initial consent to the
-  // Mixpanel persistence setting.
-  const desiredPersistenceForConsent = function (
-    consentGranted,
-    currentPersistence
-  ) {
-    return consentGranted ? currentPersistence : "disabled";
-  };
-  const initialConsentGranted = isConsentGranted("analytics_storage");
-  const initialDesiredPersistenceConfig = desiredPersistenceForConsent(
-    initialConsentGranted,
-    initOptions.persistence
-  );
-  log(
-    LOG_PREFIX,
-    "Applying initial desired persistence (analytics_storage consent granted=" +
-      initialConsentGranted +
-      "), initOptions.persistence=" +
-      initOptions.persistence +
-      ", desired=" +
-      initialDesiredPersistenceConfig
-  );
-  if (initOptions.persistence !== initialDesiredPersistenceConfig) {
-    log(
-      LOG_PREFIX,
-      "Overriding initial persistence config (analytics_storage consent granted=" +
-        initialConsentGranted +
-        ") from " +
-        initOptions.persistence +
-        " to " +
-        initialDesiredPersistenceConfig
-    );
-    initOptions.persistence = initialDesiredPersistenceConfig;
+const applyDisablePersistenceUntilConsentGranted = () => {
+  if (!data.disablePersistenceUntilConsentGranted) {
+    return;
   }
+  const applyDisablePersistence = (consentGranted) => {
+    const desiredDisablePersistence = !consentGranted;
+    log(LOG_PREFIX, "desiredDisablePersistence=" + desiredDisablePersistence);
+    // This can't use callMixpanel, since _mixpanel.apply() doesn't support set_config().
+    //
+    // That means this also can't work with the Library Name option, since that would require
+    // allowlisting arbitrary strings for Execute permissions in GTM.
+    callInWindow("mixpanel.set_config", {
+      disable_persistence: desiredDisablePersistence,
+    });
+  };
+
+  // Apply the current analytics_storage consent setting in case it changed since mixpanel.init()
+  // finished loading.
+  applyDisablePersistence(isConsentGranted("analytics_storage"));
+
   // Listen for further changes to `analytics_storage` consent and apply them if needed.
   addConsentListener("analytics_storage", (consentType, consentGranted) => {
-    const currentPersistence = callInWindow(
-      "mixpanel." + libraryName + "get_config"
-    ).persistence;
-    const desiredPersistence = desiredPersistenceForConsent(
-      consentGranted,
-      currentPersistence
-    );
-    log(
-      LOG_PREFIX,
-      "Consent changed (analytics_storage consent granted=" +
-        consentGranted +
-        "), updating persistence from: " +
-        currentPersistence +
-        " to: " +
-        desiredPersistence
-    );
-    if (currentPersistence === desiredPersistence) {
-      return;
-    }
-    callMixpanel(libraryName + "set_config", {
-      persistence: desiredPersistence,
-    });
+    log(LOG_PREFIX, consentType + " consent changed to " + consentGranted);
+    applyDisablePersistence(consentGranted);
   });
+};
+
+const loadedCallback = () => {
+  log(LOG_PREFIX, "Handling loaded callback");
+  applyDisablePersistenceUntilConsentGranted();
+};
+
+if (initOptions.loaded) {
+  const originalLoadedCallback = initOptions.loaded;
+  initOptions.loaded = () => {
+    loadedCallback();
+    originalLoadedCallback();
+  };
+} else {
+  initOptions.loaded = loadedCallback;
+}
+
+if (data.disablePersistenceUntilConsentGranted) {
+  const initialDisablePersistence =
+    initOptions.disable_persistence === undefined ? false : initOptions.disable_persistence;
+  const desiredDisablePersistence = !isConsentGranted("analytics_storage");
+  log(
+    LOG_PREFIX,
+    "Applying initial disable_persistence, initial=" +
+      initialDisablePersistence +
+      ", desired=" +
+      desiredDisablePersistence
+  );
+  if (initialDisablePersistence !== desiredDisablePersistence) {
+    initOptions.disable_persistence = desiredDisablePersistence;
+  }
 }
 
 // Initialize the instance if necessary
@@ -2064,6 +2060,45 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "_mixpanel.apply"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "mixpanel.set_config"
                   },
                   {
                     "type": 8,
