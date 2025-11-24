@@ -1225,10 +1225,10 @@ ___TEMPLATE_PARAMETERS___
     "subParams": [
       {
         "type": "CHECKBOX",
-        "name": "optOutUntilCookieConsentGranted",
-        "checkboxText": "Disable Mixpanel until the user grants cookie consent",
+        "name": "disablePersistenceUntilConsentGranted",
+        "checkboxText": "Disable Mixpanel persistence until the user grants consent",
         "simpleValueType": true,
-        "help": "If checked, the user is opted out of Mixpanel integration until cookie consent is granted.\n\nYou must integrate Google Tag Manager with a Consent Mode Provider (CMP) in order for this to function."
+        "help": "If checked, the user is opted out of Mixpanel persistence until analytics_storage consent is granted via a Consent Mode Provider integrated into GTM. This means each session from the same device will have a new, random distinct ID, and different sessions from the same device cannot be connected.\n\nYou must integrate Google Tag Manager with a Consent Mode Provider (CMP) in order for this to function."
       },
       {
         "type": "TEXT",
@@ -1615,28 +1615,66 @@ for (const option in GTM_DEFAULTS) {
     initOptions[option] = GTM_DEFAULTS[option];
   }
 }
-if (data.optOutUntilCookieConsentGranted) {
-  let mixcloudOptInState = true;
-  // If the user has not customized opt-out tracking, opt out by default and
-  // set up GTM cookie consent listeners.
-  log(LOG_PREFIX + 'Initializing Mixpanel opt-out...');
-  const analyticsConsentGranted = isConsentGranted('analytics_storage');
-  if (analyticsConsentGranted) {
-    log(LOG_PREFIX + 'Analytics consent granted, keeping opted-in.');
-  } else {
-    log(LOG_PREFIX + 'Analytics consent not granted, opting out until granted.');
-    initOptions.opt_out_tracking_by_default = true;
-    mixcloudOptInState = false;
+
+if (data.disablePersistenceUntilConsentGranted) {
+  // Integrate with a Consent Mode Provider (CMP) to apply the initial consent to the
+  // Mixpanel persistence setting.
+  const desiredPersistenceForConsent = function (
+    consentGranted,
+    currentPersistence
+  ) {
+    return consentGranted ? currentPersistence : "disabled";
+  };
+  const initialConsentGranted = isConsentGranted("analytics_storage");
+  const initialDesiredPersistenceConfig = desiredPersistenceForConsent(
+    initialConsentGranted,
+    initOptions.persistence
+  );
+  log(
+    LOG_PREFIX,
+    "Applying initial desired persistence (analytics_storage consent granted=" +
+      initialConsentGranted +
+      "), initOptions.persistence=" +
+      initOptions.persistence +
+      ", desired=" +
+      initialDesiredPersistenceConfig
+  );
+  if (initOptions.persistence !== initialDesiredPersistenceConfig) {
+    log(
+      LOG_PREFIX,
+      "Overriding initial persistence config (analytics_storage consent granted=" +
+        initialConsentGranted +
+        ") from " +
+        initOptions.persistence +
+        " to " +
+        initialDesiredPersistenceConfig
+    );
+    initOptions.persistence = initialDesiredPersistenceConfig;
   }
-  addConsentListener('analytics_storage', (consentType, granted) => {
-    if (granted === mixcloudOptInState) {
-      // Nothing to do. Don't pollute the Mixpanel logs with unnecessary opt-in events.
+  // Listen for further changes to `analytics_storage` consent and apply them if needed.
+  addConsentListener("analytics_storage", (consentType, consentGranted) => {
+    const currentPersistence = callInWindow(
+      "mixpanel." + libraryName + "get_config"
+    ).persistence;
+    const desiredPersistence = desiredPersistenceForConsent(
+      consentGranted,
+      currentPersistence
+    );
+    log(
+      LOG_PREFIX,
+      "Consent changed (analytics_storage consent granted=" +
+        consentGranted +
+        "), updating persistence from: " +
+        currentPersistence +
+        " to: " +
+        desiredPersistence
+    );
+    if (currentPersistence === desiredPersistence) {
       return;
     }
-    const operation = granted ? 'opt_in_tracking' : 'opt_out_tracking';
-    log(LOG_PREFIX + 'Consent changed, running operation: ' + operation);
-    callMixpanel(libraryName + operation, getType(data.optOptions) === 'object' ? data.optOptions : null);
-    mixcloudOptInState = granted;
+    callMixpanel(libraryName + "set_config", {
+      persistence: desiredPersistence,
+    });
   });
 }
 
