@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -1225,10 +1217,10 @@ ___TEMPLATE_PARAMETERS___
     "subParams": [
       {
         "type": "CHECKBOX",
-        "name": "disablePersistenceUntilConsentGranted",
-        "checkboxText": "Disable Mixpanel persistence until the user grants consent",
+        "name": "optOutTrackingUntilConsentGranted",
+        "checkboxText": "Opt out of transmitting Mixpanel analytics until the user grants consent",
         "simpleValueType": true,
-        "help": "If checked, the user is opted out of Mixpanel persistence until analytics_storage consent is granted via a Consent Mode Provider integrated into GTM. This means each session from the same device will have a new, random distinct ID, and different sessions from the same device cannot be connected.\n\nYou must integrate Google Tag Manager with a Consent Mode Provider (CMP) in order for this to function."
+        "help": "If checked, the user is opted out of transmitting Mixpanel analytics until analytics_storage consent is granted via a Consent Mode Provider integrated into GTM."
       },
       {
         "type": "TEXT",
@@ -1610,42 +1602,44 @@ const GTM_DEFAULTS = {
   persistence: 'localStorage',
   stop_utm_persistence: true,
 };
+if (data.optOutTrackingUntilConsentGranted) {
+  log(LOG_PREFIX, "Defaulting opt_out_tracking_by_default to true");
+  GTM_DEFAULTS.opt_out_tracking_by_default = true;
+}
+
 for (const option in GTM_DEFAULTS) {
   if (initOptions[option] === undefined) {
     initOptions[option] = GTM_DEFAULTS[option];
   }
 }
 
-const applyDisablePersistenceUntilConsentGranted = () => {
-  if (!data.disablePersistenceUntilConsentGranted) {
+const applyOptOutTrackingUntilConsentGranted = () => {
+  if (!data.optOutTrackingUntilConsentGranted) {
     return;
   }
-  const applyDisablePersistence = (consentGranted) => {
-    const desiredDisablePersistence = !consentGranted;
-    log(LOG_PREFIX, "desiredDisablePersistence=" + desiredDisablePersistence);
-    // This can't use callMixpanel, since _mixpanel.apply() doesn't support set_config().
-    //
-    // That means this also can't work with the Library Name option, since that would require
-    // allowlisting arbitrary strings for Execute permissions in GTM.
-    callInWindow("mixpanel.set_config", {
-      disable_persistence: desiredDisablePersistence,
-    });
+  const applyOptInOutChange = (consentGranted) => {
+    const desiredOptInOutCommand = consentGranted ? 'opt_in_tracking' : 'opt_out_tracking';
+    log(LOG_PREFIX, "Applying opt in/out command: " + desiredOptInOutCommand);
+    // By default, Mixpanel will emit opt-in / opt-out events every
+    // time this is called. Disable that, since this is not a user action.
+    const noOpTrackFunction = () => {};
+    callMixpanel(desiredOptInOutCommand, {track: noOpTrackFunction});
   };
 
   // Apply the current analytics_storage consent setting in case it changed since mixpanel.init()
   // finished loading.
-  applyDisablePersistence(isConsentGranted("analytics_storage"));
+  applyOptInOutChange(isConsentGranted("analytics_storage"));
 
   // Listen for further changes to `analytics_storage` consent and apply them if needed.
   addConsentListener("analytics_storage", (consentType, consentGranted) => {
     log(LOG_PREFIX, consentType + " consent changed to " + consentGranted);
-    applyDisablePersistence(consentGranted);
+    applyOptInOutChange(consentGranted);
   });
 };
 
 const loadedCallback = () => {
   log(LOG_PREFIX, "Handling loaded callback");
-  applyDisablePersistenceUntilConsentGranted();
+  applyOptOutTrackingUntilConsentGranted();
 };
 
 if (initOptions.loaded) {
@@ -1656,22 +1650,6 @@ if (initOptions.loaded) {
   };
 } else {
   initOptions.loaded = loadedCallback;
-}
-
-if (data.disablePersistenceUntilConsentGranted) {
-  const initialDisablePersistence =
-    initOptions.disable_persistence === undefined ? false : initOptions.disable_persistence;
-  const desiredDisablePersistence = !isConsentGranted("analytics_storage");
-  log(
-    LOG_PREFIX,
-    "Applying initial disable_persistence, initial=" +
-      initialDisablePersistence +
-      ", desired=" +
-      desiredDisablePersistence
-  );
-  if (initialDisablePersistence !== desiredDisablePersistence) {
-    initOptions.disable_persistence = desiredDisablePersistence;
-  }
 }
 
 // Initialize the instance if necessary
