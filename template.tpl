@@ -1602,9 +1602,10 @@ const GTM_DEFAULTS = {
   persistence: 'localStorage',
   stop_utm_persistence: true,
 };
+
 if (data.optOutTrackingUntilConsentGranted) {
-  log(LOG_PREFIX, "Defaulting opt_out_tracking_by_default to true");
-  GTM_DEFAULTS.opt_out_tracking_by_default = true;
+  // Don't set opt_out_tracking_by_default, since that unconditionally deletes the user, which
+  // we don't want to do while figuring out GTM consent.
 }
 
 for (const option in GTM_DEFAULTS) {
@@ -1620,10 +1621,12 @@ const applyOptOutTrackingUntilConsentGranted = () => {
   const applyOptInOutChange = (consentGranted) => {
     const desiredOptInOutCommand = consentGranted ? 'opt_in_tracking' : 'opt_out_tracking';
     log(LOG_PREFIX, "Applying opt in/out command: " + desiredOptInOutCommand);
-    // By default, Mixpanel will emit opt-in / opt-out events every
-    // time this is called. Disable that, since this is not a user action.
-    const noOpTrackFunction = () => {};
-    callMixpanel(desiredOptInOutCommand, {track: noOpTrackFunction});
+    // By default, Mixpanel will emit opt-in events every time this is called. Disable that,
+    // since this is not a user action.
+    //
+    // Also, whenever calling opt_out_tracking(), Mixpanel will by default delete the user and
+    // clear the persistence store. Disable that as well.
+    callMixpanel(desiredOptInOutCommand, {track: false, delete_user: false, clear_persistence: false});
   };
 
   // Apply the current analytics_storage consent setting in case it changed since mixpanel.init()
