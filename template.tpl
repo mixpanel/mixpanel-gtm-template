@@ -1525,6 +1525,32 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true
       }
     ]
+  },
+  {
+    "type": "GROUP",
+    "name": "flagsGroup",
+    "displayName": "Feature Flags",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "flagsOptions",
+        "displayName": "Feature Flags",
+        "macrosInSelect": true,
+        "selectItems": [
+          {
+            "value": false,
+            "displayValue": "Disabled"
+          },
+          {
+            "value": true,
+            "displayValue": "Enabled"
+          }
+        ],
+        "simpleValueType": true,
+        "help": "Enable or disable feature flags. Select <strong>Enabled</strong> or <strong>Disabled</strong>, or pass a GTM variable that returns a configuration object for advanced setup.<br/><br/>The configuration object supports the following:<ul><li><strong>context</strong> — An object with one or more string key-value pairs for data group keys used in flag evaluation.<br/>e.g. <code>{\"context\": {\"company_id\": \"corp\"}}</code></li><li><strong>custom_properties</strong> (inside <strong>context</strong>) — A sub-object for runtime properties used in flag targeting.<br/>e.g. <code>{\"context\": {\"company_id\": \"corp\", \"custom_properties\": {\"plan\": \"enterprise\"}}}</code></li></ul>"
+      }
+    ]
   }
 ]
 
@@ -1595,6 +1621,7 @@ const manualOptions = normalizeTable(data.initManualOptions, 'key', 'value') || 
 
 const initOptions = (data.initOptions === 'manual' ? manualOptions : data.initOptions) || {};
 initOptions.autocapture = data.autocaptureMode;
+initOptions.flags = data.flagsOptions;
 
 const GTM_DEFAULTS = {
   mp_loader: 'gtm',
