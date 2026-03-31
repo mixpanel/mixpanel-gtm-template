@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: d35886729da49e7f86acd2da506173b2bd743066
+    changeNotes: Add feature flags config option. If enabled, feature flags will be fetched on SDK initialization.
   - sha: 38dc6bd0e473e95171c236f11c0fd71d1fe06888
     changeNotes: Change default init options. If not specified, 'persistence' defaults to 'localStorage' and 'stop_utm_persistence' defaults to true.
   - sha: da9b5fca97db49a0f76462d8be5db4b56d878772
