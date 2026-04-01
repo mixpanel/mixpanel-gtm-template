@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -1224,6 +1216,13 @@ ___TEMPLATE_PARAMETERS___
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
+        "type": "CHECKBOX",
+        "name": "optOutTrackingUntilConsentGranted",
+        "checkboxText": "Opt out of transmitting Mixpanel analytics until the user grants consent",
+        "simpleValueType": true,
+        "help": "If checked, the user is opted out of transmitting Mixpanel analytics until analytics_storage consent is granted via a Consent Mode Provider integrated into GTM."
+      },
+      {
         "type": "TEXT",
         "name": "instanceName",
         "displayName": "Library Name",
@@ -1558,10 +1557,12 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 // APIs
+const addConsentListener = require('addConsentListener');
 const callInWindow = require('callInWindow');
 const copyFromWindow = require('copyFromWindow');
 const getType = require('getType');
 const injectScript = require('injectScript');
+const isConsentGranted = require('isConsentGranted');
 const log = require('logToConsole');
 const makeNumber = require('makeNumber');
 const makeString = require('makeString');
@@ -1628,10 +1629,57 @@ const GTM_DEFAULTS = {
   persistence: 'localStorage',
   stop_utm_persistence: true,
 };
+
+if (data.optOutTrackingUntilConsentGranted) {
+  // Don't set opt_out_tracking_by_default, since that unconditionally deletes the user, which
+  // we don't want to do while figuring out GTM consent.
+}
+
 for (const option in GTM_DEFAULTS) {
   if (initOptions[option] === undefined) {
     initOptions[option] = GTM_DEFAULTS[option];
   }
+}
+
+const applyOptOutTrackingUntilConsentGranted = () => {
+  if (!data.optOutTrackingUntilConsentGranted) {
+    return;
+  }
+  const applyOptInOutChange = (consentGranted) => {
+    const desiredOptInOutCommand = consentGranted ? 'opt_in_tracking' : 'opt_out_tracking';
+    log(LOG_PREFIX, "Applying opt in/out command: " + desiredOptInOutCommand);
+    // By default, Mixpanel will emit opt-in events every time this is called. Disable that,
+    // since this is not a user action.
+    //
+    // Also, whenever calling opt_out_tracking(), Mixpanel will by default delete the user and
+    // clear the persistence store. Disable that as well.
+    callMixpanel(desiredOptInOutCommand, {track: false, delete_user: false, clear_persistence: false});
+  };
+
+  // Apply the current analytics_storage consent setting in case it changed since mixpanel.init()
+  // finished loading.
+  applyOptInOutChange(isConsentGranted("analytics_storage"));
+
+  // Listen for further changes to `analytics_storage` consent and apply them if needed.
+  addConsentListener("analytics_storage", (consentType, consentGranted) => {
+    log(LOG_PREFIX, consentType + " consent changed to " + consentGranted);
+    applyOptInOutChange(consentGranted);
+  });
+};
+
+const loadedCallback = () => {
+  log(LOG_PREFIX, "Handling loaded callback");
+  applyOptOutTrackingUntilConsentGranted();
+};
+
+if (initOptions.loaded) {
+  const originalLoadedCallback = initOptions.loaded;
+  initOptions.loaded = () => {
+    loadedCallback();
+    originalLoadedCallback();
+  };
+} else {
+  initOptions.loaded = loadedCallback;
 }
 
 // Initialize the instance if necessary
@@ -2034,6 +2082,45 @@ ___WEB_PERMISSIONS___
                     "boolean": true
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "mixpanel.set_config"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
               }
             ]
           }
@@ -2080,6 +2167,59 @@ ___WEB_PERMISSIONS___
       "param": []
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_consent",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "consentTypes",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "analytics_storage"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
@@ -2093,3 +2233,5 @@ setup: ''
 ___NOTES___
 
 Created on 27/10/2021, 18:34:01
+
+
