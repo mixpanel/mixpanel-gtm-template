@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: f1f41ff8d8093fc8b9ad04800d7c2273d82605e6
+    changeNotes: Add remote_settings_mode config option for controlling how remote settings are fetched during initialization (strict, fallback, or disabled).
   - sha: d35886729da49e7f86acd2da506173b2bd743066
     changeNotes: Add feature flags config option. If enabled, feature flags will be fetched on SDK initialization.
   - sha: 38dc6bd0e473e95171c236f11c0fd71d1fe06888
