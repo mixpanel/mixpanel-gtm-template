@@ -1334,6 +1334,10 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "hooks",
                 "displayValue": "hooks"
+              },
+              {
+                "value": "remote_settings_mode",
+                "displayValue": "remote_settings_mode"
               }
             ],
             "isUnique": true,
