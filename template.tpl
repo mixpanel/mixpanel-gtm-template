@@ -1473,6 +1473,10 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "recorder_src",
                 "displayValue": "recorder_src"
+              },
+              {
+                "value": "remote_settings_mode",
+                "displayValue": "remote_settings_mode"
               }
             ],
             "isUnique": true,
