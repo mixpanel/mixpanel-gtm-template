@@ -9,7 +9,7 @@ The easiest way to install the custom template is to locate it in the [Google Ta
 
 To **manually install** the template, e.g. for debugging prior to the changes being published in the community template gallery, follow these steps.
 
-1. Download the `./src/template.tpl` file locally.
+1. Download the `./template.tpl` file locally.
 2. Open a **Google Tag Manager** *Web* container via the [Google Tag Manager user interface](https://tagmanager.google.com/). Preferably one that is already deployed on a website where you can test the template with real use cases.
 3. In the GTM UI, browse to **Templates**, and in the box titled **Tag Templates**, click the blue **New** button.
 4. Once the **Template Editor** is open, click the menu (three vertical dots) in the top-right corner of the window and choose **Import**.
