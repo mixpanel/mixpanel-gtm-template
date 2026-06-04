@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: TODO
+    changeNotes: Fix Session Replay privacy selectors (record_mask_text_selector, record_block_selector) breaking when set to empty or whitespace values in "Set options manually"; these now fall back to the SDK default instead of producing an invalid CSS selector.
   - sha: f1f41ff8d8093fc8b9ad04800d7c2273d82605e6
     changeNotes: Add remote_settings_mode config option for controlling how remote settings are fetched during initialization (strict, fallback, or disabled).
   - sha: d35886729da49e7f86acd2da506173b2bd743066

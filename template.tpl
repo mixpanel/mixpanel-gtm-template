@@ -1594,13 +1594,20 @@ const normalize = val => {
   return makeNumber(val) || val;
 };
 
+const SELECTOR_OPTIONS = ['record_block_selector', 'record_mask_text_selector'];
+
 // Normalize the template table
 const normalizeTable = (table, prop, val) => {
   if (table && table.length) {
     table = table.map(row => {
       const obj = {};
       obj[prop] = row[prop];
-      obj[val] = normalize(row[val]);
+      let value = normalize(row[val]);
+      if (SELECTOR_OPTIONS.indexOf(row[prop]) !== -1 &&
+          getType(value) === 'string' && value.trim() === '') {
+        value = undefined;
+      }
+      obj[val] = value;
       return obj;
     });
     return makeTableMap(table, prop, val);
