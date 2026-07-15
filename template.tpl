@@ -1451,6 +1451,18 @@ ___TEMPLATE_PARAMETERS___
                 "displayValue": "record_idle_timeout_ms"
               },
               {
+                "value": "record_mask_all_inputs",
+                "displayValue": "record_mask_all_inputs"
+              },
+              {
+                "value": "record_mask_all_text",
+                "displayValue": "record_mask_all_text"
+              },
+              {
+                "value": "record_mask_input_selector",
+                "displayValue": "record_mask_input_selector"
+              },
+              {
                 "value": "record_mask_text_class",
                 "displayValue": "record_mask_text_class"
               },
@@ -1469,6 +1481,14 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "record_sessions_percent",
                 "displayValue": "record_sessions_percent"
+              },
+              {
+                "value": "record_unmask_input_selector",
+                "displayValue": "record_unmask_input_selector"
+              },
+              {
+                "value": "record_unmask_text_selector",
+                "displayValue": "record_unmask_text_selector"
               },
               {
                 "value": "recorder_src",
@@ -1594,7 +1614,13 @@ const normalize = val => {
   return makeNumber(val) || val;
 };
 
-const SELECTOR_OPTIONS = ['record_block_selector', 'record_mask_text_selector'];
+const SELECTOR_OPTIONS = [
+  'record_block_selector',
+  'record_mask_input_selector',
+  'record_mask_text_selector',
+  'record_unmask_input_selector',
+  'record_unmask_text_selector'
+];
 
 // Normalize the template table
 const normalizeTable = (table, prop, val) => {
