@@ -1,6 +1,8 @@
 homepage: "https://mixpanel.com/"
 documentation: "https://developer.mixpanel.com/docs/javascript-quickstart"
 versions:
+  - sha: 56239f66b8028d1a01008b41c13d709bab7a204d
+    changeNotes: Add Session Replay masking config options to "Set options manually" (record_mask_all_text, record_unmask_text_selector, record_mask_all_inputs, record_mask_input_selector, record_unmask_input_selector).
   - sha: d79da91f28d774b1621c46dc9137f1e853219ac3
     changeNotes: Fix Session Replay privacy selectors (record_mask_text_selector, record_block_selector) breaking when set to empty or whitespace values in "Set options manually"; these now fall back to the SDK default instead of producing an invalid CSS selector.
   - sha: f1f41ff8d8093fc8b9ad04800d7c2273d82605e6
