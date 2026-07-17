@@ -1435,6 +1435,10 @@ ___TEMPLATE_PARAMETERS___
                 "displayValue": "track_pageview"
               },
               {
+                "value": "record_allowed_iframe_origins",
+                "displayValue": "record_allowed_iframe_origins"
+              },
+              {
                 "value": "record_block_class",
                 "displayValue": "record_block_class"
               },
@@ -1591,6 +1595,7 @@ const makeNumber = require('makeNumber');
 const makeString = require('makeString');
 const makeTableMap = require('makeTableMap');
 const templateStorage = require('templateStorage');
+const JSON = require('JSON');
 
 // Constants
 const INSTANCES_STORAGE_KEY = 'mixpanel_instances';
@@ -1622,6 +1627,10 @@ const SELECTOR_OPTIONS = [
   'record_unmask_text_selector'
 ];
 
+const JSON_ARRAY_OPTIONS = [
+  'record_allowed_iframe_origins'
+];
+
 // Normalize the template table
 const normalizeTable = (table, prop, val) => {
   if (table && table.length) {
@@ -1629,7 +1638,16 @@ const normalizeTable = (table, prop, val) => {
       const obj = {};
       obj[prop] = row[prop];
       let value = normalize(row[val]);
-      if (SELECTOR_OPTIONS.indexOf(row[prop]) !== -1 &&
+      if (JSON_ARRAY_OPTIONS.indexOf(row[prop]) !== -1 &&
+          getType(value) === 'string') {
+        const decodedObj = JSON.parse(value);
+        if (getType(decodedObj) === 'array' &&
+            decodedObj.every(item => getType(item) === 'string')) {
+          value = decodedObj;
+        } else {
+          value = undefined;
+        }
+      } else if (SELECTOR_OPTIONS.indexOf(row[prop]) !== -1 &&
           getType(value) === 'string' && value.trim() === '') {
         value = undefined;
       }
